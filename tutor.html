@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Matemático – CLQ</title>
+    <link rel="stylesheet" href="simulador.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="tutor-page">
+    <header class="sim-header">
+        <h1>Tutor Matemático</h1>
+        <p class="intro">Plantea tu duda en lenguaje natural y nuestro tutor la resolverá paso a paso.</p>
+    </header>
+    <main class="tutor-container">
+        <div id="chat" class="chat-window">
+            <!-- Los mensajes se añadirán aquí -->
+        </div>
+        <!-- Botón para limpiar la conversación -->
+        <div class="chat-actions">
+            <button id="clear-chat" class="btn secondary small" type="button">Limpiar conversación</button>
+        </div>
+        <form id="chat-form" class="chat-form" autocomplete="off">
+            <input type="text" id="user-input" placeholder="Escribe tu pregunta o problema..." required>
+            <button type="submit" class="btn">Enviar</button>
+        </form>
+    </main>
+    <!-- Script de tutor incorporado -->
+    <script>
+    // Módulo simple de tutor. Analiza palabras clave y responde de forma predefinida.
+    const chatWindow = document.getElementById('chat');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+
+    // Diccionario de temas con respuestas ejemplo y sugerencias de práctica
+    const tutorTopics = {
+        algebra: {
+            keywords: ['ecuación', 'x', 'álgebra', 'variable'],
+            response: 'Para resolver ecuaciones de primer grado, despeja la incógnita. Por ejemplo, en 2x + 3 = 9, resta 3 a ambos lados y luego divide por 2 para obtener x = 3.',
+            practice: 'Resuelve: 3x - 5 = 10. ¿Cuál es el valor de x?'
+        },
+        geometria: {
+            keywords: ['triángulo', 'ángulo', 'geometría', 'perímetro', 'área', 'rectángulo'],
+            response: 'En geometría, el perímetro de un rectángulo se calcula sumando el doble de su ancho y largo. El área es ancho por largo. Si tienes un triángulo, recuerda que la suma de sus ángulos internos es 180°.',
+            practice: 'Calcula el área de un rectángulo de 5 cm de largo y 3 cm de ancho.'
+        },
+        funciones: {
+            keywords: ['función', 'gráfica', 'pendiente', 'parábola'],
+            response: 'Una función lineal tiene la forma f(x) = mx + b donde m es la pendiente y b es la ordenada al origen. Para trazarla, ubica el punto (0, b) y a partir de ahí aplica la pendiente.',
+            practice: 'Dibuja la gráfica de f(x) = 2x + 1 e indica su pendiente y su intercepto.'
+        },
+        probabilidad: {
+            keywords: ['probabilidad', 'dados', 'azar', 'dados', 'evento'],
+            response: 'La probabilidad de un evento es la razón entre casos favorables y casos posibles. Por ejemplo, al lanzar un dado justo, la probabilidad de obtener un 6 es 1/6.',
+            practice: 'Si lanzas una moneda dos veces, ¿cuál es la probabilidad de obtener dos caras?'
+        }
+        , conjuntos: {
+            keywords: ['conjunto', 'intersección', 'unión', 'elemento'],
+            response: 'Los conjuntos son colecciones de elementos bien definidos. La intersección A ∩ B incluye solo los elementos que pertenecen a ambos conjuntos, mientras que la unión A ∪ B combina todos los elementos de ambos conjuntos.',
+            practice: 'Dados los conjuntos A = {1,3,5} y B = {3,4,5}, calcula A ∪ B y A ∩ B.'
+        },
+        datos: {
+            keywords: ['media', 'mediana', 'moda', 'promedio', 'datos', 'estadística'],
+            response: 'En estadística, la media se calcula sumando todos los datos y dividiendo por la cantidad de elementos. La mediana es el valor central al ordenar los datos y la moda es el valor que más se repite.',
+            practice: 'Para el conjunto {2, 4, 4, 5, 6}, calcula la media, la mediana y la moda.'
+        },
+        calculo: {
+            keywords: ['derivada', 'derivar', 'integral', 'integrar', 'límite', 'cálculo'],
+            response: 'El cálculo estudia conceptos como límites, derivadas e integrales. La derivada mide la tasa de cambio instantánea de una función, mientras que la integral calcula el área bajo una curva.',
+            practice: 'Calcula la derivada de f(x) = x^3 + 2x y la integral de g(x) = 2x.'
+        }
+    };
+
+    // Función para añadir mensajes al chat
+    function addMessage(text, sender) {
+        const msg = document.createElement('div');
+        msg.classList.add('message', sender);
+        msg.textContent = text;
+        chatWindow.appendChild(msg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // Función para procesar la entrada del usuario
+    function processInput(input) {
+        const lower = input.toLowerCase();
+        // Buscar coincidencias en los temas
+        for (const topic in tutorTopics) {
+            const { keywords, response, practice } = tutorTopics[topic];
+            if (keywords.some(k => lower.includes(k))) {
+                return `${response}\n\nEjercicio propuesto: ${practice}`;
+            }
+        }
+        // Respuesta predeterminada si no se encuentra tema
+        return 'Lo siento, no logro identificar el tema específico de tu consulta. Intenta formular tu duda indicando el concepto (ejemplo: ecuaciones, triángulos, funciones).';
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const question = userInput.value.trim();
+        if (!question) return;
+        addMessage(question, 'user');
+        const answer = processInput(question);
+        setTimeout(() => {
+            addMessage(answer, 'bot');
+        }, 400);
+        userInput.value = '';
+    });
+
+    // Limpia la conversación al pulsar el botón correspondiente
+    const clearBtn = document.getElementById('clear-chat');
+    clearBtn.addEventListener('click', () => {
+        chatWindow.innerHTML = '';
+        userInput.value = '';
+    });
+    </script>
+</body>
+</html>
